@@ -236,6 +236,15 @@ class HDate(BaseClass):
         return omer_day
 
     @property
+    def hanukkah_day(self):
+        """Return the day of Hanukkah."""
+        first_hanukkah_day = HebrewDate(self.hdate.year, Months.Kislev, 25)
+        hanukkah_day = self._jdn - conv.hdate_to_jdn(first_hanukkah_day) + 1
+        if not 0 < hanukkah_day <= 8:
+            return 0
+        return hanukkah_day
+
+    @property
     def daf_yomi_repr(self):
         """Return a tuple of mesechta and daf."""
         days_since_start_cycle_11 = (self.gdate - htables.DAF_YOMI_CYCLE_11_START).days
