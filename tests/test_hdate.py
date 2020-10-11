@@ -397,6 +397,27 @@ class TestSpecialDays(object):
             rand_hdate.hdate = HebrewDate(rand_hdate.hdate.year, 9, day)
             assert rand_hdate.omer_day == day + 44
 
+    @pytest.mark.parametrize("execution_number", list(range(10)))
+    def test_get_hanukkah_day(self, execution_number, rand_hdate):
+        if (
+            rand_hdate.hdate.month not in [Months.Kislev, Months.Tevet]
+            or rand_hdate.hdate.month == Months.Kislev
+            and rand_hdate.hdate.day < 25
+            or rand_hdate.hdate.month == Months.Tevet
+            and rand_hdate.hdate.day > 3
+        ):
+            assert rand_hdate.hanukkah_day == 0
+
+        kislev = list(range(25, 30))
+        tevet = list(range(1, 3))
+
+        for day in kislev:
+            rand_hdate.hdate = HebrewDate(rand_hdate.hdate.year, 3, day)
+            assert rand_hdate.hanukkah_day == day + 4
+        for day in tevet:
+            rand_hdate.hdate = HebrewDate(rand_hdate.hdate.year, 4, day)
+            assert rand_hdate.hanukkah_day == day - 3
+
     def test_daf_yomi(self):
         # Random test date
         myhdate = HDate(gdate=datetime.date(2014, 4, 28), hebrew=False)
