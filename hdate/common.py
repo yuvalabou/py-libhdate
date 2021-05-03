@@ -20,16 +20,16 @@ class BaseClass(object):  # pylint: disable=useless-object-inheritance
 
         return self.__unicode__()
 
-    def __unicode__(self):  # pragma: no cover
+    def __unicode__(self) -> None:  # pragma: no cover
         """Implement the representation of the object."""
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """Override equality operator."""
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """Override inequality operator."""
         return not self.__eq__(other)
 
@@ -37,7 +37,7 @@ class BaseClass(object):  # pylint: disable=useless-object-inheritance
 class HebrewDate(BaseClass):  # pylint: disable=too-few-public-methods
     """Define a Hebrew date object."""
 
-    def __init__(self, year, month, day):
+    def __init__(self, year, month, day) -> None:
         """Initialize the Hebrew date object."""
         self.year = year
         self.month = month if isinstance(month, Months) else Months(month)
@@ -56,7 +56,7 @@ class Location(BaseClass):
         timezone="Asia/Jerusalem",
         altitude=754,
         diaspora=False,
-    ):
+    ) -> None:
         """Initialitze the location object."""
         self._timezone = None
         self.name = name
@@ -66,7 +66,7 @@ class Location(BaseClass):
         self.altitude = altitude
         self.diaspora = diaspora
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a representation of Location for programmatic use."""
         return (
             "Location(name='{}', latitude={}, longitude={}, "
@@ -86,7 +86,7 @@ class Location(BaseClass):
         return self._timezone
 
     @timezone.setter
-    def timezone(self, value):
+    def timezone(self, value) -> None:
         """Set the timezone."""
         self._timezone = (
             value if isinstance(value, datetime.tzinfo) else pytz.timezone(value)

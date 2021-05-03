@@ -30,7 +30,7 @@ class HDate(BaseClass):
 
     def __init__(
         self, gdate=datetime.date.today(), diaspora=False, hebrew=True, heb_date=None
-    ):
+    ) -> None:
         """Initialize the HDate object."""
         # Create private variables
         self._hdate = None
@@ -67,7 +67,7 @@ class HDate(BaseClass):
             result += u" " + self.holiday_description
         return result
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a representation of HDate for programmatic use."""
         return "HDate(gdate={}, diaspora={}, hebrew={})".format(
             repr(self.gdate), self.diaspora, self.hebrew
@@ -78,7 +78,7 @@ class HDate(BaseClass):
         assert isinstance(other, HDate)
         return self.gdate < other.gdate
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         """Implement the less-than or equal operator."""
         return not other < self
 
@@ -86,7 +86,7 @@ class HDate(BaseClass):
         """Implement the greater-than operator."""
         return other < self
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """Implement the greater than or equal operator."""
         return not self < other
 
@@ -121,7 +121,7 @@ class HDate(BaseClass):
         return conv.jdn_to_gdate(self._jdn)
 
     @gdate.setter
-    def gdate(self, date):
+    def gdate(self, date) -> None:
         """Set the Gregorian date for the given Hebrew date object."""
         self._last_updated = "gdate"
         self._gdate = date
@@ -134,7 +134,7 @@ class HDate(BaseClass):
         return conv.hdate_to_jdn(self.hdate)
 
     @property
-    def hebrew_date(self):
+    def hebrew_date(self) -> str:
         """Return the hebrew date string."""
         return u"{} {} {}".format(
             hebrew_number(self.hdate.day, hebrew=self.hebrew),  # Day
@@ -143,7 +143,7 @@ class HDate(BaseClass):
         )
 
     @property
-    def parasha(self):
+    def parasha(self) -> str:
         """Return the upcoming parasha."""
         return htables.PARASHAOT[self.get_reading()][self.hebrew]
 
@@ -159,7 +159,7 @@ class HDate(BaseClass):
         return desc.hebrew.long if self.hebrew else desc.english
 
     @property
-    def is_shabbat(self):
+    def is_shabbat(self) -> bool:
         """Return True if this date is Shabbat, specifically Saturday.
 
         Returns False on Friday because the HDate object has no notion of time.
@@ -168,12 +168,12 @@ class HDate(BaseClass):
         return self.gdate.weekday() == 5
 
     @property
-    def is_holiday(self):
+    def is_holiday(self) -> bool:
         """Return True if this date is a holiday (any kind)."""
         return self.holiday_type != HolidayTypes.UNKNOWN
 
     @property
-    def is_yom_tov(self):
+    def is_yom_tov(self) -> bool:
         """Return True if this date is a Yom Tov."""
         return self.holiday_type == HolidayTypes.YOM_TOV
 
@@ -184,7 +184,7 @@ class HDate(BaseClass):
         return entry.type
 
     @property
-    def holiday_name(self):
+    def holiday_name(self) -> str:
         """Return the holiday name which is good for programmatic use."""
         entry = self._holiday_entry()
         return entry.name
@@ -202,32 +202,32 @@ class HDate(BaseClass):
         # If anything is left return it, otherwise return the "NULL" holiday
         return holidays_list[0] if holidays_list else htables.HOLIDAYS[0]
 
-    def short_kislev(self):
+    def short_kislev(self) -> bool:
         """Return whether this year has a short Kislev or not."""
         return self.year_size() in [353, 383]
 
     @property
-    def dow(self):
+    def dow(self) -> int:
         """Return Hebrew day of week Sunday = 1, Saturday = 7."""
         # datetime weekday maps Monday->0, Sunday->6; this remaps to Sunday->1.
         return self.gdate.weekday() + 2 if self.gdate.weekday() != 6 else 1
 
-    def year_size(self):
+    def year_size(self) -> int:
         """Return the size of the given Hebrew year."""
         return conv.get_size_of_hebrew_year(self.hdate.year)
 
-    def rosh_hashana_dow(self):
+    def rosh_hashana_dow(self) -> int:
         """Return the Hebrew day of week for Rosh Hashana."""
         jdn = conv.hdate_to_jdn(HebrewDate(self.hdate.year, Months.Tishrei, 1))
         return (jdn + 1) % 7 + 1
 
-    def pesach_dow(self):
+    def pesach_dow(self) -> int:
         """Return the first day of week for Pesach."""
         jdn = conv.hdate_to_jdn(HebrewDate(self.hdate.year, Months.Nisan, 15))
         return (jdn + 1) % 7 + 1
 
     @property
-    def omer_day(self):
+    def omer_day(self) -> int:
         """Return the day of the Omer."""
         first_omer_day = HebrewDate(self.hdate.year, Months.Nisan, 16)
         omer_day = self._jdn - conv.hdate_to_jdn(first_omer_day) + 1
@@ -249,7 +249,7 @@ class HDate(BaseClass):
         return mesechta, daf_number
 
     @property
-    def daf_yomi(self):
+    def daf_yomi(self) -> str:
         """Return a string representation of the daf yomi."""
         mesechta, daf_number = self.daf_yomi_repr
         if self.hebrew:
@@ -467,7 +467,7 @@ class HDate(BaseClass):
         return readings[weeks]
 
 
-def hebrew_number(num, hebrew=True, short=False):
+def hebrew_number(num, hebrew=True, short=False) -> str:
     """Return "Gimatria" number."""
     if not hebrew:
         return str(num)
@@ -500,7 +500,7 @@ def hebrew_number(num, hebrew=True, short=False):
     return hstring
 
 
-def get_omer_string(omer):  # pylint: disable=too-many-branches
+def get_omer_string(omer) -> str:  # pylint: disable=too-many-branches
     """Return a string representing the count of the Omer."""
     # TODO: The following function should be simplified (see pylint)
     tens = [u"", u"עשרה", u"עשרים", u"שלושים", u"ארבעים"]

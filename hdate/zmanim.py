@@ -49,7 +49,7 @@ class Zmanim(BaseClass):
         hebrew=True,
         candle_lighting_offset=18,
         havdalah_offset=0,
-    ):
+    ) -> None:
         """
         Initialize the Zmanim object.
 
@@ -102,7 +102,7 @@ class Zmanim(BaseClass):
             ]
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a representation of Zmanim for programmatic use."""
         # As time zone information is not really reusable due to DST, when
         # creating a __repr__ of zmanim, we show a timezone naive datetime.
@@ -113,7 +113,7 @@ class Zmanim(BaseClass):
         )
 
     @property
-    def utc_zmanim(self):
+    def utc_zmanim(self) -> dict:
         """Return a dictionary of the zmanim in UTC time format."""
         basetime = dt.datetime.combine(self.date, dt.time()).replace(tzinfo=pytz.utc)
         _LOGGER.debug("Calculating UTC zmanim for %r", basetime)
@@ -123,7 +123,7 @@ class Zmanim(BaseClass):
         }
 
     @property
-    def zmanim(self):
+    def zmanim(self) -> dict:
         """Return a dictionary of the zmanim the object represents."""
         return {
             key: value.astimezone(self.location.timezone)
@@ -187,7 +187,7 @@ class Zmanim(BaseClass):
         return None
 
     @property
-    def issur_melacha_in_effect(self):
+    def issur_melacha_in_effect(self) -> bool:
         """At the given time, return whether issur melacha is in effect."""
         today = HDate(gdate=self.date, diaspora=self.location.diaspora)
         tomorrow = HDate(
@@ -207,7 +207,7 @@ class Zmanim(BaseClass):
 
         return False
 
-    def gday_of_year(self):
+    def gday_of_year(self) -> int:
         """Return the number of days since January 1 of the given year."""
         return (self.date - dt.date(self.date.year, 1, 1)).days
 
