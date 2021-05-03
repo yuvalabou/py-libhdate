@@ -10,7 +10,7 @@ from hdate.common import HebrewDate
 from hdate.htables import Months
 
 
-def get_chalakim(hours, parts):
+def get_chalakim(hours: int, parts: int) -> int:
     """Return the number of total parts (chalakim)."""
     return (hours * PARTS_IN_HOUR) + parts
 

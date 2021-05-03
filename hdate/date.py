@@ -6,7 +6,7 @@ Jewish calendrical date and times for a given location.
 HDate calculates and generates a represantation either in English or Hebrew
 of the Jewish calendrical date and times for a given location
 """
-from __future__ import division
+from __future__ import division, annotations
 
 import datetime
 import logging
@@ -73,7 +73,7 @@ class HDate(BaseClass):
             repr(self.gdate), self.diaspora, self.hebrew
         )
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """Implement the less-than operator."""
         assert isinstance(other, HDate)
         return self.gdate < other.gdate
@@ -82,7 +82,7 @@ class HDate(BaseClass):
         """Implement the less-than or equal operator."""
         return not other < self
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """Implement the greater-than operator."""
         return other < self
 
@@ -148,12 +148,8 @@ class HDate(BaseClass):
         return htables.PARASHAOT[self.get_reading()][self.hebrew]
 
     @property
-    def holiday_description(self):
-        """
-        Return the holiday description.
-
-        In case none exists will return None.
-        """
+    def holiday_description(self) -> str | None:
+        """Return the holiday description."""
         entry = self._holiday_entry()
         desc = entry.description
         return desc.hebrew.long if self.hebrew else desc.english
@@ -467,7 +463,7 @@ class HDate(BaseClass):
         return readings[weeks]
 
 
-def hebrew_number(num, hebrew=True, short=False) -> str:
+def hebrew_number(num: int, hebrew=True, short=False) -> str:
     """Return "Gimatria" number."""
     if not hebrew:
         return str(num)
@@ -500,7 +496,7 @@ def hebrew_number(num, hebrew=True, short=False) -> str:
     return hstring
 
 
-def get_omer_string(omer) -> str:  # pylint: disable=too-many-branches
+def get_omer_string(omer: int) -> str:  # pylint: disable=too-many-branches
     """Return a string representing the count of the Omer."""
     # TODO: The following function should be simplified (see pylint)
     tens = [u"", u"עשרה", u"עשרים", u"שלושים", u"ארבעים"]
