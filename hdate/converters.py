@@ -5,7 +5,7 @@ from hdate.common import HebrewDate
 from hdate.htables import Months
 
 
-def get_chalakim(hours, parts):
+def get_chalakim(hours: int, parts: int) -> int:
     """Return the number of total parts (chalakim)."""
     return (hours * PARTS_IN_HOUR) + parts
 
@@ -16,7 +16,7 @@ PARTS_IN_WEEK = 7 * PARTS_IN_DAY
 PARTS_IN_MONTH = PARTS_IN_DAY + get_chalakim(12, 793)  # Fix for regular month
 
 
-def _days_from_3744(hebrew_year):
+def _days_from_3744(hebrew_year: int) -> int:
     """Return: Number of days since 3,1,3744."""
     # Start point for calculation is Molad new year 3744 (16BC)
     years_from_3744 = hebrew_year - 3744
@@ -72,7 +72,7 @@ def _days_from_3744(hebrew_year):
     return days
 
 
-def get_size_of_hebrew_year(hebrew_year):
+def get_size_of_hebrew_year(hebrew_year: int) -> int:
     """Return: total days in hebrew year."""
     return _days_from_3744(hebrew_year + 1) - _days_from_3744(hebrew_year)
 

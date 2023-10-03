@@ -340,7 +340,7 @@ class Months(Enum):
     ADAR_II = 14
 
 
-def year_is_after(year):
+def year_is_after(year: int) -> bool:
     """
     Return a lambda function.
 
@@ -350,7 +350,7 @@ def year_is_after(year):
     return lambda x: x.hdate.year > year
 
 
-def year_is_before(year):
+def year_is_before(year: int) -> bool:
     """
     Return a lambda function.
 
@@ -360,7 +360,9 @@ def year_is_before(year):
     return lambda x: x.hdate.year < year
 
 
-def move_if_not_on_dow(original, replacement, dow_not_orig, dow_replacement):
+def move_if_not_on_dow(
+    original: int, replacement: int, dow_not_orig: int, dow_replacement: int
+) -> int:
     """
     Return a lambda function.
 

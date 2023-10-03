@@ -11,13 +11,13 @@ from hdate.htables import Months
 class BaseClass:
     """Implement basic functionality for all classes."""
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """Override equality operator."""
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """Override inequality operator."""
         return not self.__eq__(other)
 
@@ -30,7 +30,7 @@ class HebrewDate(BaseClass):
     month: Months
     day: int
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.month = (
             self.month if isinstance(self.month, Months) else Months(self.month)
         )
@@ -42,13 +42,13 @@ class Location(BaseClass):
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        name="Jerusalem",
-        latitude=31.778,
-        longitude=35.235,
-        timezone="Asia/Jerusalem",
-        altitude=754,
-        diaspora=False,
-    ):
+        name: str = "Jerusalem",
+        latitude: float = 31.778,
+        longitude: float = 35.235,
+        timezone: str = "Asia/Jerusalem",
+        altitude: int = 754,
+        diaspora: bool = False,
+    ) -> None:
         """Initialitze the location object."""
         self._timezone = None
         self.name = name
@@ -58,7 +58,7 @@ class Location(BaseClass):
         self.altitude = altitude
         self.diaspora = diaspora
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a representation of Location for programmatic use."""
         return (
             f"Location(name='{self.name}', latitude={self.latitude}, "
@@ -67,11 +67,11 @@ class Location(BaseClass):
         )
 
     @property
-    def timezone(self):
+    def timezone(self) -> None:
         """Return the timezone."""
         return self._timezone
 
     @timezone.setter
-    def timezone(self, value):
+    def timezone(self, value: str) -> None:
         """Set the timezone."""
         self._timezone = value if isinstance(value, tzinfo) else pytz.timezone(value)

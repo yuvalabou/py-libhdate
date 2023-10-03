@@ -7,6 +7,7 @@ of the Jewish calendrical times for a given location
 import datetime as dt
 import logging
 import math
+from typing import Any
 
 import pytz
 
@@ -43,10 +44,10 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         self,
         date=dt.datetime.now(),
         location=Location(),
-        hebrew=True,
-        candle_lighting_offset=18,
-        havdalah_offset=0,
-    ):
+        hebrew: bool = True,
+        candle_lighting_offset: int = 18,
+        havdalah_offset: int = 0,
+    ) -> None:
         """
         Initialize the Zmanim object.
 
@@ -89,7 +90,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
             )
             self.astral_sun = astral.sun.sun(self.astral_observer, self.date)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a Unicode representation of Zmanim."""
         return "\n".join(
             [
@@ -98,7 +99,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
             ]
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a representation of Zmanim for programmatic use."""
         # As time zone information is not really reusable due to DST, when
         # creating a __repr__ of zmanim, we show a timezone naive datetime.
@@ -119,7 +120,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         }
 
     @property
-    def zmanim(self):
+    def zmanim(self) -> dict:
         """Return a dictionary of the zmanim the object represents."""
         return {
             key: value.astimezone(self.location.timezone)
@@ -183,7 +184,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         return None
 
     @property
-    def issur_melacha_in_effect(self):
+    def issur_melacha_in_effect(self) -> bool:
         """At the given time, return whether issur melacha is in effect."""
         today = HDate(gdate=self.date, diaspora=self.location.diaspora)
         tomorrow = HDate(
@@ -204,7 +205,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         return False
 
     @property
-    def erev_shabbat_chag(self):
+    def erev_shabbat_chag(self) -> bool:
         """At the given time, return whether erev shabbat or chag"""
         today = HDate(gdate=self.date, diaspora=self.location.diaspora)
         tomorrow = HDate(
@@ -221,7 +222,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         return False
 
     @property
-    def motzei_shabbat_chag(self):
+    def motzei_shabbat_chag(self) -> bool:
         """At the given time, return whether motzei shabbat or chag"""
         today = HDate(gdate=self.date, diaspora=self.location.diaspora)
         tomorrow = HDate(
@@ -237,11 +238,11 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
 
         return False
 
-    def gday_of_year(self):
+    def gday_of_year(self) -> int:
         """Return the number of days since January 1 of the given year."""
         return (self.date - dt.date(self.date.year, 1, 1)).days
 
-    def _get_utc_sun_time_deg(self, deg):
+    def _get_utc_sun_time_deg(self, deg: float) -> tuple[int, int]:
         """
         Return the times in minutes from 00:00 (utc) for a given sun altitude.
 
@@ -313,7 +314,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
             int(720.0 - 4.0 * longitude + hour_angle - eqtime),
         )
 
-    def _datetime_to_minutes_offest(self, time):
+    def _datetime_to_minutes_offest(self, time) -> int:
         """Return the time in minutes from 00:00 (utc) for a given time."""
         return (
             time.hour * 60
@@ -333,7 +334,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
             )
         )
 
-    def get_utc_sun_time_full(self):
+    def get_utc_sun_time_full(self) -> dict[str, Any]:
         """Return a list of Jewish times for the given location."""
         if not _USE_ASTRAL:
             sunrise, sunset = self._get_utc_sun_time_deg(90.833)
