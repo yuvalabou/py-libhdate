@@ -42,12 +42,12 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        date=dt.datetime.now(),
-        location=Location(),
+        date: dt.datetime = dt.datetime.now(),
+        location: Location = Location(),
         hebrew: bool = True,
         candle_lighting_offset: int = 18,
         havdalah_offset: int = 0,
-    ) -> None:
+    ):
         """
         Initialize the Zmanim object.
 
@@ -110,7 +110,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         )
 
     @property
-    def utc_zmanim(self):
+    def utc_zmanim(self) -> dict[str, dt.datetime]:
         """Return a dictionary of the zmanim in UTC time format."""
         basetime = dt.datetime.combine(self.date, dt.time()).replace(tzinfo=pytz.utc)
         _LOGGER.debug("Calculating UTC zmanim for %r", basetime)
@@ -120,7 +120,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         }
 
     @property
-    def zmanim(self) -> dict:
+    def zmanim(self) -> dict[str, dt.date]:
         """Return a dictionary of the zmanim the object represents."""
         return {
             key: value.astimezone(self.location.timezone)
@@ -128,7 +128,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         }
 
     @property
-    def candle_lighting(self):
+    def candle_lighting(self) -> dt.date:
         """Return the time for candle lighting, or None if not applicable."""
         today = HDate(gdate=self.date, diaspora=self.location.diaspora)
         tomorrow = HDate(
@@ -151,7 +151,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         return None
 
     @property
-    def _havdalah_datetime(self):
+    def _havdalah_datetime(self) -> dt.date:
         """Compute the havdalah time based on settings."""
         if self.havdalah_offset == 0:
             return self.zmanim["three_stars"]
@@ -159,7 +159,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         return self.zmanim["sunset"] + dt.timedelta(minutes=self.havdalah_offset)
 
     @property
-    def havdalah(self):
+    def havdalah(self) -> dt.date:
         """Return the time for havdalah, or None if not applicable.
 
         If havdalah_offset is 0, uses the time for three_stars. Otherwise,
@@ -258,11 +258,11 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
         The low accuracy solar position equations are used.
         These routines are based on Jean Meeus's book Astronomical Algorithms.
         """
-        gama = 0  # location of sun in yearly cycle in radians
-        eqtime = 0  # difference betwen sun noon and clock noon
-        decl = 0  # sun declanation
-        hour_angle = 0  # solar hour angle
-        sunrise_angle = math.pi * deg / 180.0  # sun angle at sunrise/set
+        gama: float = 0  # location of sun in yearly cycle in radians
+        eqtime: float = 0  # difference betwen sun noon and clock noon
+        decl: float = 0  # sun declanation
+        hour_angle: float = 0  # solar hour angle
+        sunrise_angle: float = math.pi * deg / 180.0  # sun angle at sunrise/set
 
         # get the day of year
         day_of_year = self.gday_of_year()
@@ -314,7 +314,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
             int(720.0 - 4.0 * longitude + hour_angle - eqtime),
         )
 
-    def _datetime_to_minutes_offest(self, time) -> int:
+    def _datetime_to_minutes_offest(self, time: dt.datetime) -> int:
         """Return the time in minutes from 00:00 (utc) for a given time."""
         return (
             time.hour * 60
@@ -323,7 +323,7 @@ class Zmanim(BaseClass):  # pylint: disable=too-many-instance-attributes
             + int((time.date() - self.date).total_seconds() // 60)
         )
 
-    def _get_utc_time_of_transit(self, zenith, rising):
+    def _get_utc_time_of_transit(self, zenith, rising) -> int:
         """Return the time in minutes from 00:00 (utc) for a given sun altitude."""
         return self._datetime_to_minutes_offest(
             astral.sun.time_of_transit(

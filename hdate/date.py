@@ -4,9 +4,12 @@ Jewish calendrical date and times for a given location.
 HDate calculates and generates a representation either in English or Hebrew
 of the Jewish calendrical date and times for a given location
 """
-import datetime
+from __future__ import annotations
+
+import datetime as dt
 import logging
 from itertools import chain, product
+from typing import Any
 
 from hdate import converters as conv
 from hdate import htables
@@ -26,10 +29,10 @@ class HDate(BaseClass):
 
     def __init__(
         self,
-        gdate: datetime.date = datetime.date.today(),
+        gdate: dt.date = dt.date.today(),
         diaspora: bool = False,
         hebrew: bool = True,
-        heb_date=None,
+        heb_date: HebrewDate | None = None,
     ) -> None:
         """Initialize the HDate object."""
         # Create private variables
@@ -74,35 +77,35 @@ class HDate(BaseClass):
             f"hebrew={self.hebrew})"
         )
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: HebrewDate) -> bool:
         """Implement the less-than operator."""
         assert isinstance(other, HDate)
         return self.gdate < other.gdate
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other: Any) -> bool:
         """Implement the less-than or equal operator."""
         return not other < self
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: Any) -> bool:
         """Implement the greater-than operator."""
         return other < self
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other: Any) -> bool:
         """Implement the greater than or equal operator."""
         return not self < other
 
     @property
-    def hdate(self):
+    def hdate(self) -> HebrewDate:
         """Return the hebrew date."""
         if self._last_updated == "hdate":
             return self._hdate
         return conv.jdn_to_hdate(self._jdn)
 
     @hdate.setter
-    def hdate(self, date: datetime.date):
+    def hdate(self, date: HebrewDate) -> HDate:
         """Set the dates of the HDate object based on a given Hebrew date."""
         # Sanity checks
-        if date is None and isinstance(self.gdate, datetime.date):
+        if date is None and isinstance(self.gdate, dt.date):
             # Calculate the value since gdate has been set
             date = self.hdate
 
@@ -115,14 +118,14 @@ class HDate(BaseClass):
         self._hdate = date
 
     @property
-    def gdate(self) -> datetime.date:
+    def gdate(self) -> dt.date:
         """Return the Gregorian date for the given Hebrew date object."""
         if self._last_updated == "gdate":
             return self._gdate
         return conv.jdn_to_gdate(self._jdn)
 
     @gdate.setter
-    def gdate(self, date: datetime.date) -> datetime.date:
+    def gdate(self, date: HebrewDate) -> dt.date:
         """Set the Gregorian date for the given Hebrew date object."""
         self._last_updated = "gdate"
         self._gdate = date
@@ -237,7 +240,7 @@ class HDate(BaseClass):
         return omer_day
 
     @property
-    def daf_yomi_repr(self) -> tuple[str]:
+    def daf_yomi_repr(self) -> tuple:
         """Return a tuple of mesechta and daf."""
         days_since_start_cycle_11 = (self.gdate - htables.DAF_YOMI_CYCLE_11_START).days
         page_number = days_since_start_cycle_11 % (htables.DAF_YOMI_TOTAL_PAGES)
@@ -261,17 +264,17 @@ class HDate(BaseClass):
         return f"{mesechta_name} {daf}"
 
     @property
-    def next_day(self):
+    def next_day(self) -> HDate:
         """Return the HDate for the next day."""
-        return HDate(self.gdate + datetime.timedelta(1), self.diaspora, self.hebrew)
+        return HDate(self.gdate + dt.timedelta(1), self.diaspora, self.hebrew)
 
     @property
-    def previous_day(self):
+    def previous_day(self) -> HDate:
         """Return the HDate for the previous day."""
-        return HDate(self.gdate + datetime.timedelta(-1), self.diaspora, self.hebrew)
+        return HDate(self.gdate + dt.timedelta(-1), self.diaspora, self.hebrew)
 
     @property
-    def upcoming_shabbat(self):
+    def upcoming_shabbat(self) -> HDate:
         """Return the HDate for either the upcoming or current Shabbat.
 
         If it is currently Shabbat, returns the HDate of the Saturday.
@@ -279,11 +282,11 @@ class HDate(BaseClass):
         if self.is_shabbat:
             return self
         # If it's Sunday, fast forward to the next Shabbat.
-        saturday = self.gdate + datetime.timedelta((12 - self.gdate.weekday()) % 7)
+        saturday = self.gdate + dt.timedelta((12 - self.gdate.weekday()) % 7)
         return HDate(saturday, diaspora=self.diaspora, hebrew=self.hebrew)
 
     @property
-    def upcoming_shabbat_or_yom_tov(self):
+    def upcoming_shabbat_or_yom_tov(self) -> HDate:
         """Return the HDate for the upcoming or current Shabbat or Yom Tov.
 
         If it is currently Shabbat, returns the HDate of the Saturday.
@@ -299,7 +302,7 @@ class HDate(BaseClass):
         return self.upcoming_shabbat
 
     @property
-    def first_day(self):
+    def first_day(self) -> HDate:
         """Return the first day of Yom Tov or Shabbat.
 
         This is useful for three-day holidays, for example: it will return the
@@ -314,7 +317,7 @@ class HDate(BaseClass):
         return day_iter
 
     @property
-    def last_day(self):
+    def last_day(self) -> HDate:
         """Return the last day of Yom Tov or Shabbat.
 
         This is useful for three-day holidays, for example: it will return the
@@ -452,7 +455,7 @@ class HDate(BaseClass):
             return 54
 
         # Return the indexes for the readings of the given year
-        def unpack_readings(readings: dict) -> list:
+        def unpack_readings(readings) -> list:
             return list(chain(*([x] if isinstance(x, int) else x for x in readings)))
 
         reading_for_year = htables.READINGS[year_type]

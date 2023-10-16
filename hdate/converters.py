@@ -1,5 +1,5 @@
 """Methods for going back and forth between various calendars."""
-import datetime
+import datetime as dt
 
 from hdate.common import HebrewDate
 from hdate.htables import Months
@@ -77,7 +77,7 @@ def get_size_of_hebrew_year(hebrew_year: int) -> int:
     return _days_from_3744(hebrew_year + 1) - _days_from_3744(hebrew_year)
 
 
-def gdate_to_jdn(date):
+def gdate_to_jdn(date: dt.date) -> int:
     """
     Compute Julian day from Gregorian day, month and year.
 
@@ -97,7 +97,7 @@ def gdate_to_jdn(date):
     return jdn
 
 
-def hdate_to_jdn(date):
+def hdate_to_jdn(date: HebrewDate) -> int:
     """
     Compute Julian day from Hebrew day, month and year.
 
@@ -130,7 +130,7 @@ def hdate_to_jdn(date):
     return day + 1715118
 
 
-def jdn_to_gdate(jdn):
+def jdn_to_gdate(jdn: int) -> dt.date:
     """
     Convert from the Julian day to the Gregorian day.
 
@@ -154,10 +154,10 @@ def jdn_to_gdate(jdn):
     month = j + 2 - (12 * l)
     year = 100 * (n - 49) + i + l  # that's a lower-case L
 
-    return datetime.date(year, month, day)
+    return dt.date(year, month, day)
 
 
-def jdn_to_hdate(jdn):
+def jdn_to_hdate(jdn: int) -> HebrewDate:
     """Convert from the Julian day to the Hebrew day."""
     # calculate Gregorian date
     date = jdn_to_gdate(jdn)

@@ -6,7 +6,7 @@ from enum import Enum
 
 READING = namedtuple("READING", "year_type, readings")
 
-READINGS = (
+READINGS: tuple[READING, ...] = (
     READING(
         [1725],
         (
@@ -217,7 +217,9 @@ READINGS = (
     ),
 )
 
-READINGS = dict((year_type, r.readings) for r in READINGS for year_type in r.year_type)
+READINGS: dict = dict(
+    (year_type, r.readings) for r in READINGS for year_type in r.year_type
+)
 
 DIGITS = (
     (" ", "א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט"),
@@ -362,7 +364,7 @@ def year_is_before(year: int) -> bool:
 
 def move_if_not_on_dow(
     original: int, replacement: int, dow_not_orig: int, dow_replacement: int
-) -> int:
+) -> bool:
     """
     Return a lambda function.
 
@@ -396,7 +398,7 @@ class HolidayTypes(Enum):
     ISRAEL_NATIONAL_HOLIDAY = 9
 
 
-HOLIDAYS = (
+HOLIDAYS: tuple[HOLIDAY, ...] = (
     HOLIDAY(HolidayTypes.UNKNOWN, "", (), "", [], LANG("", "", DESC("", ""))),
     HOLIDAY(
         HolidayTypes.EREV_YOM_TOV,
